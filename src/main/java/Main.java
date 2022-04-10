@@ -34,6 +34,7 @@ public class Main {
         JButton[][] matricaJbtn = new JButton[6][6];
         int[][] matrica = new int[6][6];
         randomMAtrica(matrica);
+        System.out.println("POYY");
 
         for(int r = 0; r < 6; r++) {
             for(int c = 0; c < 6; c++) {
