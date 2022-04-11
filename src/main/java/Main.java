@@ -10,110 +10,79 @@ public class Main {
 
     private static int height = 500, width = 500;
     private static int brojacPlus = 0, brojacMinus = 24;
+    private static JButton[][] matricaJbtn = new JButton[6][6];
+    private static JFrame window;
 
+    /**
+     * Class MyFrame
+     */
+    private static class MyFrame extends JFrame {
+        private int x;
+        private int y;
+        private int brojacMinus;
+        private int brojacPlus;
+        private String tekst;
 
-    public static class MyButton extends JButton {
-        private int xPos;
-        private int yPos;
+        /**
+         * Constructor class MyFrame
+         * @param tekst
+         * @param x
+         * @param y
+         * @param brojacMinus
+         * @param brojacPlus
+         */
+        public MyFrame(String tekst, int x, int y, int brojacMinus, int brojacPlus) {
+            super(tekst);
+            this.tekst = tekst;
+            this.x = x;
+            this.y = y;
+            this.brojacMinus = brojacMinus;
+            this.brojacPlus = brojacPlus;
 
-        public MyButton(int xPos, int yPos){
-            this.xPos = xPos;
-            this.yPos = yPos;
+            setDefaultCloseOperation(EXIT_ON_CLOSE);
+            setBounds(x, y, width, height);
+            setLayout(new GridLayout(6, 6));
+
         }
-        public int getXPos() {
-            return xPos;
-        }
 
-        public int getYPos() {
-            return yPos;
+    }
+
+    /**
+     * Checking win or lose
+     */
+    public static void checkingWinOrLose() {
+        if (brojacMinus == 0 && brojacPlus < 12) {
+            JOptionPane.showMessageDialog(window, "Kraj igre. Pobedili ste!");
+        } else if (brojacPlus == 12 && brojacMinus > 0) {
+            JOptionPane.showMessageDialog(window, "Kraj igre. Izgubili ste!");
         }
     }
 
-    public static void createMatrx(JFrame window){
-
-        JButton[][] matricaJbtn = new JButton[6][6];
-        int[][] matrica = new int[6][6];
-        randomMAtrica(matrica);
-        System.out.println("POYY");
-
-        for(int r = 0; r < 6; r++) {
-            for(int c = 0; c < 6; c++) {
-                MyButton myButton = new MyButton(r,c);
-                myButton.setBackground(Color.white);
-                myButton.setForeground(Color.black);
-                matricaJbtn[r][c] = myButton;
-                myButton.addActionListener(new ActionListener() {
-                    @Override
-                    public void actionPerformed(ActionEvent e) {
-
-                        myButton.setFont(new Font("Arial", Font.PLAIN, 25));
-
-                        if (matrica[myButton.getXPos()][myButton.getYPos()] != 0) {
-                            brojacMinus--;
-                            myButton.setText("*");
-                        } else {
-                            myButton.setText("x");
-                            brojacPlus++;
-                        }
-
-                        if (brojacMinus == 0 && brojacPlus < 12) {
-                            JDialog jDialog = new JDialog();
-                            JPanel p = new JPanel();
-
-                            JLabel l = new JLabel("Pobedili ste!");
-                            JButton button = new JButton("Kraj");
-
-                            button.addActionListener(new ActionListener() {
-                                @Override
-                                public void actionPerformed(ActionEvent e) {
-                                    window.dispose();
-                                    jDialog.dispose();
-                                }
-                            });
-
-                            p.add(l);
-                            p.add(button);
-                            jDialog.add(p);
-
-                            jDialog.setSize(200, 100);
-                            jDialog.setVisible(true);
-                            jDialog.setLocation(window.getX() + window.getWidth() / 3, window.getY() + window.getHeight() / 3);
-                        } else if (brojacPlus == 12 && brojacMinus > 0) {
-                            JDialog jDialog = new JDialog();
-                            JPanel p = new JPanel();
-
-                            JLabel l = new JLabel("Izgubili ste!");
-                            JButton button = new JButton("Kraj");
-
-                            button.addActionListener(new ActionListener() {
-                                @Override
-                                public void actionPerformed(ActionEvent e) {
-                                    window.dispose();
-                                    jDialog.dispose();
-                                }
-                            });
-
-                            p.add(l);
-                            p.add(button);
-                            jDialog.add(p);
-
-                            jDialog.setSize(200, 100);
-                            jDialog.setVisible(true);
-                            jDialog.setLocation(window.getX() + window.getWidth() / 3, window.getY() + window.getHeight() / 3);
-                        }
-                    }
-                });
-
-                window.add(matricaJbtn[r][c]);
-                window.setVisible(true);
-            }
+    /**
+     * Checking to see if I guessed
+     *
+     * @param matrica
+     * @param myButton
+     */
+    public static void checkingShot(int[][] matrica, MyButton myButton, JFrame window) {
+        if (matrica[myButton.getXPos()][myButton.getYPos()] != 0) {
+            brojacMinus--;
+            myButton.setText("*");
+        } else {
+            myButton.setText("x");
+            window.dispose();
+            brojacPlus++;
         }
     }
 
+
+    /**
+     * Generate random matrix
+     * @param matrica
+     */
     public static void randomMAtrica(int[][] matrica) {
 
         Random rand = new Random();
-
         for (int i = 0; i < matrica.length; i++) {
             for (int j = 0; j < 4; j++) {
                 int x = rand.nextInt(59) + 1;
@@ -125,27 +94,46 @@ public class Main {
         }
     }
 
+    /**
+     * Create matrix of JButtons and add matrix on JFrame
+     *
+     * @param window
+     */
+    public static void createMatrx(JFrame window) {
+
+        int[][] matrica = new int[6][6];
+        randomMAtrica(matrica);
+
+        for (int r = 0; r < 6; r++) {
+            for (int c = 0; c < 6; c++) {
+                MyButton myButton = new MyButton(r, c);
+                matricaJbtn[r][c] = myButton;
+                myButton.addActionListener(new ActionListener() {
+                    @Override
+                    public void actionPerformed(ActionEvent e) {
+
+                        myButton.setFont(new Font("Arial", Font.PLAIN, 25));
+                        checkingShot(matrica, myButton,window);
+                        checkingWinOrLose();
+
+                    }
+                });
+                window.add(matricaJbtn[r][c]);
+                window.setVisible(true);
+            }
+        }
+    }
+
+
 
 
     public static void main(String[] args) {
 
-        JFrame prozor = new JFrame("Submarine");
-        prozor.setDefaultCloseOperation(prozor.EXIT_ON_CLOSE);
-        prozor.setBounds(100,200,width,height);
-        prozor.setLayout(new GridLayout(6,6));
+        MyFrame myFrame = new MyFrame("Submarine-Player1", 300, 200, brojacMinus, brojacPlus);
 
-        JFrame prozor2 = new JFrame("Submarine");
-        prozor2.setDefaultCloseOperation(prozor.EXIT_ON_CLOSE);
-        prozor2.setBounds(700,200,width,height);
-        prozor2.setLayout(new GridLayout(6,6));
-
-
-
-        createMatrx(prozor2);
-        createMatrx(prozor);
-
-
-
+        MyFrame myFrame1 = new MyFrame("Submarine-Player2", 900, 200, brojacMinus, brojacPlus);
+        createMatrx(myFrame1);
+        createMatrx(myFrame);
 
 
 
