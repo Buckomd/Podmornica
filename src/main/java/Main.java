@@ -72,6 +72,7 @@ public class Main {
             myButton.setText("x");
             window.dispose();
             brojacPlus++;
+            System.out.println(brojacMinus);
         }
     }
 
