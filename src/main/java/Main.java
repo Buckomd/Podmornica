@@ -188,7 +188,7 @@ public class Main {
         createMatrx(myFrame, myFrame1, myFrame.getBr(),myFrame.getNames());
         createMatrx(myFrame1, myFrame, myFrame1.getBr(), myFrame1.getNames());
         myFrame1.setVisible(false);
-
-
+        
+        System.out.println("Kraj Igre!");
     }
 }
